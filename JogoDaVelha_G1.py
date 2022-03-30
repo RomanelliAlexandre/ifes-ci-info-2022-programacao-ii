@@ -1,11 +1,32 @@
 import tkinter
 from tkinter import messagebox
 
+class Placar:
+    def __init__(self):
+        self.vitorias_x = 0
+        self.vitorias_o = 0
+
+    def reg_vitoria_x(self):
+        self.vitorias_x += 1
+
+    def reg_vitoria_o(self):
+        self.vitorias_o += 1
+
+    def obtem_placar(self):
+        return self.vitorias_x, self.vitorias_o
+
 matrizJogo = [[0, 0, 0],
               [0, 0, 0],
               [0, 0, 0]]
 jogador = ["X"]
 matrizBtn = []
+p = Placar()
+l_placar = []
+
+def atualizaPlacar():
+    cont_vitorias_x, cont_vitorias_o = p.obtem_placar()
+    str_label = "X: {:d} \t O: {:d}".format(cont_vitorias_x, cont_vitorias_o)
+    l_placar[0]["text"] = str_label
 
 def executaJogada(linha, coluna):
     if matrizJogo[linha][coluna] == 0:
@@ -27,14 +48,58 @@ def verificaDiagonais():
     else:
         return 0
 
+def verificaLinhas():
+    for linha in range(3):
+        j = matrizJogo[linha][0]
+        contIguais = 0
+        for coluna in range(3):
+            if matrizJogo[linha][coluna] == j:
+                contIguais += 1
+        if contIguais == 3 and j != 0:
+            return j
+    return 0
+
+def verificaColunas():
+    for coluna in range(3):
+        j = matrizJogo[0][coluna]
+        contIguais = 0
+        for linha in range(3):
+            if matrizJogo[linha][coluna] == j:
+                contIguais += 1
+        if contIguais == 3 and j != 0:
+            return j
+    return 0
+
 def verificaJogo():
     resultadoEmDiagonais = verificaDiagonais()
     if resultadoEmDiagonais != 0:
         if resultadoEmDiagonais == 1:
             messagebox.showinfo(title="Resultado", message="X venceu")
+            p.reg_vitoria_x()
         else:
             messagebox.showinfo(title="Resultado", message="O venceu")
+            p.reg_vitoria_o()
         reiniciaJogo()
+    else:
+        resultadoEmLinhas = verificaLinhas()
+        if resultadoEmLinhas != 0:
+            if resultadoEmLinhas == 1:
+                messagebox.showinfo(title="Resultado", message="X venceu")
+                p.reg_vitoria_x()
+            else:
+                messagebox.showinfo(title="Resultado", message="O venceu")
+                p.reg_vitoria_o()
+            reiniciaJogo()
+        else:
+            resultadoEmColunas = verificaColunas()
+            if resultadoEmColunas != 0:
+                if resultadoEmColunas == 1:
+                    messagebox.showinfo(title="Resultado", message="X venceu")
+                    p.reg_vitoria_x()
+                else:
+                    messagebox.showinfo(title="Resultado", message="O venceu")
+                    p.reg_vitoria_o()
+                reiniciaJogo()
 
 def reiniciaJogo():
     for i in range(3):
@@ -42,6 +107,7 @@ def reiniciaJogo():
             matrizJogo[i][j] = 0
             matrizBtn[i][j]["text"] = ""
     jogador[0] = "X"
+    atualizaPlacar()
 
 def executaJogada1():
     executaJogada(0, 0)
@@ -143,5 +209,13 @@ btn9.grid(row=2, column=2)
 matrizBtn = [[btn1, btn2, btn3],
              [btn4, btn5, btn6],
              [btn7, btn8, btn9]]
+
+labelPlacar = tkinter.Label(text="X: 0 \t O: 0")
+labelPlacar["font"] = ("Calibri", "16")
+labelPlacar["height"] = 2
+labelPlacar.grid(row=3, column=0, columnspan=3)
+
+l_placar = [labelPlacar]
+atualizaPlacar()
 
 root.mainloop()
