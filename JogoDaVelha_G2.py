@@ -101,20 +101,54 @@ def reiniciaJogo():
 def posVitoriaIminenteJogadorEmLinhas(jogador):
     for l in range(3):
         contJogador = 0
-        posZero = -1
+        colunaComZero = -1
         for c in range(3):
             if matrizJogo[l][c] == jogador:
                 contJogador += 1
             if matrizJogo[l][c] == 0:
-                posZero = c
-        if contJogador == 2 and posZero != -1:
-            return l, posZero
+                colunaComZero = c
+        if contJogador == 2 and colunaComZero != -1:
+            return l, colunaComZero
     return -1, -1
 
 def posVitoriaIminenteJogadorEmColunas(jogador):
+    for c in range(3):
+        contJogador = 0
+        linhaComZero = -1
+        for l in range(3):
+            if matrizJogo[l][c] == jogador:
+                contJogador += 1
+            if matrizJogo[l][c] == 0:
+                linhaComZero = l
+        if contJogador == 2 and linhaComZero != -1:
+            return linhaComZero, c
     return -1, -1
 
+def posVitoriaIminenteJogadorNaDiagonal(jogador, diagonal):
+    contJogador = 0
+    posZero = -1
+    for i in range(3):
+        if (diagonal == 0 and matrizJogo[i][i] == jogador):
+            contJogador += 1
+        if (diagonal == 1 and matrizJogo[2 - i][i] == jogador):
+            contJogador += 1
+        if (diagonal == 0 and matrizJogo[i][i] == 0):
+            posZero = i
+        if (diagonal == 1 and matrizJogo[2 - i][i] == 0):
+            posZero = i
+    if contJogador == 2:
+        return posZero
+    else:
+        return -1
+
 def posVitoriaIminenteJogadorEmDiagonais(jogador):
+    pos = posVitoriaIminenteJogadorNaDiagonal(jogador, 0)
+    if pos != -1:
+        return pos, pos
+    else:
+        pos = posVitoriaIminenteJogadorNaDiagonal(jogador, 1)
+        if pos != -1:
+            return 2 - pos, pos
     return -1, -1
 
 def posicao_de_vitoria_iminente(jog):
@@ -186,59 +220,27 @@ def executaJogada9():
 root = tkinter.Frame()
 root.master.title("Jogo da velha")
 
-btn1 = tkinter.Button()
-btn2 = tkinter.Button()
-btn3 = tkinter.Button()
-btn4 = tkinter.Button()
-btn5 = tkinter.Button()
-btn6 = tkinter.Button()
-btn7 = tkinter.Button()
-btn8 = tkinter.Button()
-btn9 = tkinter.Button()
+def constroiBotao(linha, coluna):
+    btn = tkinter.Button()
+    btn.grid(row=linha, column=coluna)
+    btn["width"] = 5
+    btn["height"] = 3
+    btn["font"] = ("Calibri", "16")
+    return btn
+
+btn1 = constroiBotao(0, 0)
+btn2 = constroiBotao(0, 1)
+btn3 = constroiBotao(0, 2)
+btn4 = constroiBotao(1, 0)
+btn5 = constroiBotao(1, 1)
+btn6 = constroiBotao(1, 2)
+btn7 = constroiBotao(2, 0)
+btn8 = constroiBotao(2, 1)
+btn9 = constroiBotao(2, 2)
 
 matrizBtn = [[btn1, btn2, btn3],
              [btn4, btn5, btn6],
              [btn7, btn8, btn9]]
-
-btn1.grid(row=0, column=0)
-btn2.grid(row=0, column=1)
-btn3.grid(row=0, column=2)
-btn4.grid(row=1, column=0)
-btn5.grid(row=1, column=1)
-btn6.grid(row=1, column=2)
-btn7.grid(row=2, column=0)
-btn8.grid(row=2, column=1)
-btn9.grid(row=2, column=2)
-
-btn1["width"] = 5
-btn2["width"] = 5
-btn3["width"] = 5
-btn4["width"] = 5
-btn5["width"] = 5
-btn6["width"] = 5
-btn7["width"] = 5
-btn8["width"] = 5
-btn9["width"] = 5
-
-btn1["height"] = 3
-btn2["height"] = 3
-btn3["height"] = 3
-btn4["height"] = 3
-btn5["height"] = 3
-btn6["height"] = 3
-btn7["height"] = 3
-btn8["height"] = 3
-btn9["height"] = 3
-
-btn1["font"] = ("Calibri", "16")
-btn2["font"] = ("Calibri", "16")
-btn3["font"] = ("Calibri", "16")
-btn4["font"] = ("Calibri", "16")
-btn5["font"] = ("Calibri", "16")
-btn6["font"] = ("Calibri", "16")
-btn7["font"] = ("Calibri", "16")
-btn8["font"] = ("Calibri", "16")
-btn9["font"] = ("Calibri", "16")
 
 btn1["command"] = executaJogada1
 btn2["command"] = executaJogada2
