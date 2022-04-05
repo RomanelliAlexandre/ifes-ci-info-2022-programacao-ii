@@ -1,18 +1,24 @@
 import tkinter
 from tkinter import messagebox
+import random
 
 class Placar:
+    """A classe Placar contém dois atributos, sendo um para registrar a quantidade de vitórias do jogador X
+       e outro para registrar a quantidade de vitórias do jogador O."""
     def __init__(self):
         self.vitorias_x = 0
         self.vitorias_o = 0
 
     def reg_vitoria_x(self):
+        """Acrescenta uma vitória ao registro de vitórias do jogador X."""
         self.vitorias_x += 1
 
     def reg_vitoria_o(self):
+        """Acrescenta uma vitória ao registro de vitórias do jogador O."""
         self.vitorias_o += 1
 
     def obtem_placar(self):
+        """Retorna os números de vitórias do jogador X e do jogador O, respectivamente."""
         return self.vitorias_x, self.vitorias_o
 
 matrizJogo = [[0, 0, 0],
@@ -28,6 +34,36 @@ def atualizaPlacar():
     str_label = "X: {:d} \t O: {:d}".format(cont_vitorias_x, cont_vitorias_o)
     l_placar[0]["text"] = str_label
 
+def posVitoriaIminenteJogadorEmLinhas(jogador):
+    for l in range(3):
+        contJogador = 0
+        posZero = -1
+        for c in range(3):
+            if matrizJogo[l][c] == jogador:
+                contJogador += 1
+            if matrizJogo[l][c] == 0:
+                posZero = c
+        if contJogador == 2 and posZero != -1:
+            return l, posZero
+    return -1, -1
+
+def posVitoriaIminenteJogadorEmColunas(jogador):
+    return -1, -1
+
+def posVitoriaIminenteJogadorEmDiagonais(jogador):
+    return -1, -1
+
+def posVitoriaIminenteJogador(jogador):
+    linha, coluna = posVitoriaIminenteJogadorEmLinhas(jogador)
+    if linha == -1:
+        linha, coluna = posVitoriaIminenteJogadorEmColunas(jogador)
+        if linha == -1:
+            return posVitoriaIminenteJogadorEmDiagonais(jogador)
+        else:
+            return linha, coluna
+    else:
+        return linha, coluna
+
 def executaJogada(linha, coluna):
     if matrizJogo[linha][coluna] == 0:
         matrizBtn[linha][coluna]["text"] = jogador[0]
@@ -38,6 +74,24 @@ def executaJogada(linha, coluna):
             matrizJogo[linha][coluna] = 2
             jogador[0] = "X"
         verificaJogo()
+    executaJogadaAutomatica()
+
+def executaJogadaAutomatica():
+    if jogador[0] == "X":
+        return
+    linha, coluna = posVitoriaIminenteJogador(2) # 2 é jogador O
+    if linha == -1:
+        linha, coluna = posVitoriaIminenteJogador(1) # 1 é o jogador X
+        if linha == -1:
+            linha = random.randint(0, 2)
+            coluna = random.randint(0, 2)
+            while matrizJogo[linha][coluna] != 0:
+                if coluna < 2:
+                    coluna += 1 # coluna = coluna + 1
+                else:
+                    coluna = 0
+                    linha = (linha + 1) % 3
+    executaJogada(linha, coluna)
 
 def verificaDiagonais():
     if matrizJogo[1][1] == 0:
@@ -100,6 +154,15 @@ def verificaJogo():
                     messagebox.showinfo(title="Resultado", message="O venceu")
                     p.reg_vitoria_o()
                 reiniciaJogo()
+            else:
+                contZero = 0
+                for l in range(3):
+                    for c in range(3):
+                        if matrizJogo[l][c] == 0:
+                            contZero += 1
+                if contZero == 0:
+                    messagebox.showinfo(title="Resultado", message="Deu velha!")
+                    reiniciaJogo()
 
 def reiniciaJogo():
     for i in range(3):

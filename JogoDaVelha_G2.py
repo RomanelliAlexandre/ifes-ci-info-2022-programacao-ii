@@ -3,17 +3,22 @@ from tkinter import messagebox
 import random
 
 class Placar:
+    """A classe Placar contém dois atributos, sendo um para registrar a quantidade de vitórias do jogador X
+       e outro para registrar a quantidade de vitórias do jogador O."""
     def __init__(self):
         self.vitorias_x = 0
         self.vitorias_o = 0
 
     def reg_vitoria_x(self):
+        """Acrescenta uma vitória ao registro de vitórias do jogador X."""
         self.vitorias_x += 1
 
     def reg_vitoria_o(self):
+        """Acrescenta uma vitória ao registro de vitórias do jogador O."""
         self.vitorias_o += 1
 
     def obtem_placar(self):
+        """Retorna os números de vitórias do jogador X e do jogador O, respectivamente."""
         return self.vitorias_x, self.vitorias_o
 
 matrizJogo = [[0, 0, 0],
@@ -93,8 +98,36 @@ def reiniciaJogo():
             matrizBtn[i][j]["text"] = ""
     jogador[0] = "X"
 
+def posVitoriaIminenteJogadorEmLinhas(jogador):
+    for l in range(3):
+        contJogador = 0
+        posZero = -1
+        for c in range(3):
+            if matrizJogo[l][c] == jogador:
+                contJogador += 1
+            if matrizJogo[l][c] == 0:
+                posZero = c
+        if contJogador == 2 and posZero != -1:
+            return l, posZero
+    return -1, -1
+
+def posVitoriaIminenteJogadorEmColunas(jogador):
+    return -1, -1
+
+def posVitoriaIminenteJogadorEmDiagonais(jogador):
+    return -1, -1
+
 def posicao_de_vitoria_iminente(jog):
-    #
+    linha, coluna = posVitoriaIminenteJogadorEmLinhas(jog)
+    if linha == -1:
+        linha, coluna = posVitoriaIminenteJogadorEmColunas(jog)
+        if linha == -1:
+            return posVitoriaIminenteJogadorEmDiagonais(jog)
+#       else:
+#           return linha, coluna
+#   else:
+#       return linha, coluna
+    return linha, coluna
 
 def executaJogadaAutomatica():
     if jogador[0] == "X":
